@@ -1,4 +1,5 @@
 # Maintainer: Alexandre Bouvier <contact@amb.tf>
+# Contributor: username227 <gfrank227 [at] gmail [dot] com>
 _pkgname=rpcsx
 pkgname=$_pkgname-git
 pkgver=r491.068d95c
