@@ -1,0 +1,46 @@
+--- PKGBUILD	2024-09-25 20:21:16.516047835 -0400
++++ PKGBUILD-new	2024-09-25 20:20:52.632610207 -0400
+@@ -3,16 +3,16 @@
+ 
+ pkgname=kdocker-git
+ _pkgname=kdocker
+-pkgver=5.2.r6.43379a6
++pkgver=6.0.r6.ef34beb
+ pkgrel=1
+ pkgdesc="An application to help you dock any application into the system tray (git version)"
+ arch=('i686' 'x86_64')
+ url="https://github.com/user-none/KDocker"
+ license=('GPL2')
+-depends=('qt5-base' 'qt5-x11extras' 'libxpm' 'libxmu')
++depends=('qt6-base' 'libxpm' 'libxmu')
+ conflicts=("${_pkgname}")
+ replaces=("${_pkgname}")
+-makedepends=('git')
++makedepends=('git' 'ninja' 'clang' 'make' 'gcc' 'cmake')
+ source=("$_pkgname::git+$url.git")
+ md5sums=('SKIP')
+ 
+@@ -23,17 +23,13 @@
+ 
+ build() {
+     cd "$srcdir/$_pkgname"
+-    qmake-qt5
+-    make
++    cmake -B build -G Ninja \
++    	-DCMAKE_INSTALL_PREFIX=/usr \
++    	-DCMAKE_BUILD_TYPE=None \
++    	-Wno-dev
++    ninja -C build
+ }
+ 
+ package() {
+-    cd "$srcdir/$_pkgname"
+-    install -Dm755 "kdocker"                             "$pkgdir/usr/bin/kdocker"
+-    install -Dm644 "helpers/appdata/kdocker.appdata.xml" "$pkgdir/usr/share/appdata/kdocker.appdata.xml"
+-    strip "$pkgdir/usr/bin/kdocker"
+-    install -Dm644 "resources/images/kdocker.png"        "$pkgdir/usr/share/pixmaps/kdocker.png"
+-    install -Dm644 "helpers/kdocker.desktop"             "$pkgdir/usr/share/applications/kdocker.desktop"
+-    install -Dm644 "helpers/kdocker"                     "$pkgdir/etc/bash_completion.d/kdocker"
+-    install -Dm644 "helpers/kdocker.1"                   "$pkgdir/usr/share/man/man1/kdocker.1"
++    DESTDIR="$pkgdir/" ninja -C $srcdir/kdocker/build install
+ }
